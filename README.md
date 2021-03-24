@@ -112,10 +112,6 @@ tags: []
 - Copy và chỉnh sửa file cài đặt cấu hình settings/config.py,bên dưới nó càng dòng chú ý cần sửa
 ```sh
     cp settings/config.py.prod.example settings/config.py
-
-```
-
-```sh
     vim settings/config.py
 ```
 
@@ -125,31 +121,48 @@ tags: []
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'taiga',
         'USER': 'taiga',
-        'PASSWORD': 'Anhduong1908',
-        'HOST': '',
-        'PORT': '',
+        'PASSWORD': 'taiga',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 } 
-    SECRET_KEY = "linex@2021"
+    SECRET_KEY = "Taiga_linex2021"
     TAIGA_URL = "https://taiga.linex.vn"
     SITES = {
     "api": {"domain": "taiga.linex.vn", "scheme": "https", "name": "api"},
     "front": {"domain": "taiga.linex.vn", "scheme": "https", "name": "front"}
+    #########################################
+    ## EMAIL
+    #########################################
+    # https://docs.djangoproject.com/en/3.1/topics/email/
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    CHANGE_NOTIFICATIONS_MIN_INTERVAL = 120  # seconds
+
+    DEFAULT_FROM_EMAIL = 'anh@linex.vn'     # Mặc định hiển thị tên email
+    #EMAIL_USE_TLS = True                   # Bật TLS
+    EMAIL_USE_SSL = True                    # Bật SSL
+    EMAIL_HOST = 'mail.linex.vn'            # Server email 
+    EMAIL_PORT = 465                        # Port ssl smtp
+    EMAIL_HOST_USER = 'anh@linex.vn'        # Tên đăng nhập trên Server mail
+    EMAIL_HOST_PASSWORD = 'MFNsV22k2z'      # Passwd 
+
+    #########################################
     ## EVENTS
-#########################################
+    #########################################
     EVENTS_PUSH_BACKEND = "taiga.events.backends.rabbitmq.EventsPushBackend"
     EVENTS_PUSH_BACKEND_OPTIONS = {
-    "url": "amqp://duonglinex:Anhduong1908@localhost:5672/taiga"
+    "url": "amqp://rabbitmqtaiga:rabbitmqtaigapassword@localhost:5672/taiga"
 }
-## TAIGA ASYNC
-#########################################
+
+    #########################################
+    ## TAIGA ASYNC
+    #########################################
     CELERY_ENABLED = os.getenv('CELERY_ENABLED', 'True') == 'True'
-
-from kombu import Queue  # noqa
-
-    CELERY_BROKER_URL = "amqp://duonglinex:Anhduong1908@localhost:5672/taiga"
+    from kombu import Queue  # noqa
+    
+    CELERY_BROKER_URL = "amqp://rabbitmqtaiga:rabbitmqtaigapassword@localhost:5672/taiga"
 }
-    CELERY_TIMEZONE = 'Asia/Ho_Chi_Minh'
+    CELERY_TIMEZONE = 'Asia/Ho_Chi_Minh'   # Set timezone khu vực
     
 ```
 - Thực thi tất cả các lệnh dưới để điền vào cơ sở dữ liệu những dữ liệu cần thiết cơ bản ban đầu:
