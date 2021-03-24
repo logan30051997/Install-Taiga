@@ -185,8 +185,6 @@ tags: []
 - Sao chép tệp cấu hình và chỉnh sửa như bên dưới
 ```sh
     sudo cp ~/taiga-front-dist/dist/conf.example.json ~/taiga-front-dist/dist/conf.json
-```
-```sh
     sudo vim ~/taiga-front-dist/dist/conf.json
 ```
 ```sh
@@ -236,8 +234,8 @@ tags: []
     vim .env
 ```
 ```sh
-    RABBITMQ_URL="amqp://duonglinex:Anhduong1908@localhost:5672"
-    SECRET="linex@2021"
+    RABBITMQ_URL="amqp://rabbitmqtaiga:rabbitmqtaigapassword@localhost:5672"
+    SECRET="Taiga_linex2021"
     WEB_SOCKET_SERVER_PORT=8888
     APP_PORT=3023
 ```
@@ -263,7 +261,7 @@ tags: []
     cp ~/taiga-protected/env.sample ~/taiga-protected/.env
 ```
 ```sh
-    SECRET_KEY=linex@2021
+    SECRET_KEY=Taiga_linex2021
     MAX_AGE=300
 ```
 ### 8.Triển khai chạy các dịch vụ Taiga tương ứng
@@ -399,9 +397,14 @@ tags: []
 server {
     listen 443 ssl
     server_name taiga.linex.vn;
-    ssl_certificate_key /etc/ssl/mykeys/taiga-ssl.local.key;
-    ssl_certificate /etc/ssl/mykeys/taiga-ssl.local.crt;
-
+    
+    # SSL
+    ssl_certificate_key /etc/nginx/taiga.key;
+    ssl_certificate /etc/nginx/taiga.crt;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    ssl_ciphers ECDHE+RSAGCM:ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:!aNULL!eNull:!EXPORT:!DES:!3DES:!MD5:!DSS;
+    
     large_client_header_buffers 4 32k;
     client_max_body_size 50M;
     charset utf-8;
@@ -486,9 +489,57 @@ server {
     sudo systemctl restart nginx
     sudo systemctl restart 'taiga*'
 ```
-- Mở trình duyệt lên và gõ https://taiga.linex.vn
-![](image-kmk98gq6.png)
-- Quá trình cài đặt thành công ,ta chọn login và tiến hành đăng nhập super user
-![](image-kmk99cst.png)
-- Giao diện quản lý đã sẵn sàng để làm việc
-![](image-kmk9a49a.png)
+
+### 10. Các lưu ý file cấu hình và note dữ liệu đã tạo
+
+- Các giữ liệu đã tạo:
+
+```sh
+Taiga
+
+Secret_key: Taiga_linex2021
+
+1. user server-taiga
+
+user: taiga
+passwd: taiga
+
+2. user PostgreSQL
+
+user: taiga
+pass: taiga
+
+3. user Rabbitmq
+
+user: rabbitmqtaiga
+passwd: rabbitmqtaigapassword
+
+
+4. web login superuser web taiga.linex.vn
+
+user: taiga
+passwd: taiga
+```
+
+- Các file và vị trí cần lưu ý:
+
+```sh
+/etc/nginx/conf.d/taiga.conf
+
+/etc/systemd/system/taiga.service
+
+/etc/systemd/system/taiga-async.service
+
+/etc/systemd/system/taiga-events.service
+
+/etc/systemd/system/taiga-protected.service
+
+/home/taiga/taiga-back/settings/config.py
+
+/home/taiga/taiga-front-dist/dist/conf.json
+
+/home/taiga/taiga-events/config.json
+
+/home/taiga/taiga-protected/.venv
+
+```
