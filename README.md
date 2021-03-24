@@ -64,25 +64,23 @@ tags: []
     sudo su taiga
     cd ~
 ```
+*Quá trình triển khai Taiga phải được hoàn tất với người dùng taiga!*
+
 - Thay đổi mật khẩu user postgres
 
 ```sh
     sudo passwd postgres
 ```
-- Đăng nhập user postgres và truy cập vào psql để tạo database cho taiga
+-  Tạo database cho taiga ở Postgres
 ```sh
-    sudo su - postgres
-    psql
-    postgres=#ALTER USER taiga WITH ENCRYPTED password 'Anhduong1908';
-    postgres=#CREATE DATABASE taiga OWNER taiga;
-    postgres=#\q
-    exit
+    sudo -u postgres createuser taiga --interactive --pwprompt
+    sudo -u postgres createdb taiga -O taiga --encoding='utf-8' --locale=en_US.utf8 --template=template0
 ```
 - Tạo người dùng RabbitMQ và một máy chủ ảo cho RabbitMQ tên là taiga
 ```sh
-    sudo rabbitmqctl add_user duonglinex Anhduong1908
+    sudo rabbitmqctl add_user rabbitmqtaiga rabbitmqtaigapassword
     sudo rabbitmqctl add_vhost taiga
-    sudo rabbitmqctl set_permissions -p taiga duonglinex ".*" ".*" ".*"
+    sudo rabbitmqctl set_permissions -p taiga rabbitmqtaiga ".*" ".*" ".*"
 ```
 ### 4.Thiết lập và cấu hình Backend cho Taiga
 ```sh
@@ -91,17 +89,23 @@ tags: []
     cd taiga-back
     git checkout stable
 -```
+
 - Tạo một virtualenv
+
 ```
     python3 -m venv .venv --prompt taiga-back
     source .venv/bin/activate
     (taiga-back) pip install --upgrade pip wheel
 ```
+
 - Cài đặt tất cả các gói phụ thuộc cho Python
+
 ```sh
     (taiga-back) pip install -r requirements.txt
 ```
+
 - Cài đặt taiga-Contrib-Protection
+
 ```sh
     (taiga-back) pip install git+https://github.com/taigaio/taiga-contrib-protected.git@6.0.0#egg=taiga-contrib-protected
 ```
