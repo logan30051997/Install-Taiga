@@ -88,7 +88,7 @@ tags: []
     git clone https://github.com/taigaio/taiga-back.git taiga-back
     cd taiga-back
     git checkout stable
--```
+```
 
 - Tạo một virtualenv
 
@@ -114,9 +114,11 @@ tags: []
     cp settings/config.py.prod.example settings/config.py
 
 ```
+
 ```sh
-    vi settings/config.py
+    vim settings/config.py
 ```
+
 ```sh
    DATABASES = {
     'default': {
